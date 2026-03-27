@@ -35,8 +35,15 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to process image");
+        // 安全地解析错误响应
+        let errorMsg = "Failed to process image";
+        try {
+          const data = await response.json();
+          errorMsg = data.error || errorMsg;
+        } catch {
+          errorMsg = `Server error (${response.status})`;
+        }
+        throw new Error(errorMsg);
       }
 
       // 将返回的图片转为 base64
