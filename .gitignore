@@ -11,8 +11,9 @@
 # testing
 /coverage
 
-# next.js - 只忽略缓存，保留 out 目录
-/.next/cache
+# next.js
+/.next/
+/out/
 
 # production
 /build
