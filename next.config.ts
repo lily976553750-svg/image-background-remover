@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // output: "export", // 本地开发时注释掉，部署到 Cloudflare 时需要启用
+  output: "export",
   images: {
     unoptimized: true,
   },
