@@ -1,8 +1,3 @@
-name = "image-background-remover"
+name = "bg-remover"
 compatibility_date = "2024-01-01"
-
-[site]
-bucket = "./out"
-
-# Cloudflare Pages Functions 配置
-# functions 目录会自动被检测
+pages_build_output_dir = "out"
