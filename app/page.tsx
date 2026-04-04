@@ -60,7 +60,7 @@ export default function Home() {
           setError(errorMsg);
         }
         
-        throw new Error(errorMsg);
+        return; // 直接返回，不继续处理
       }
 
       // 将返回的图片转为 base64
