@@ -109,7 +109,7 @@ export default function Home() {
         )}
 
         {/* Upload / Result Section */}
-        <div className="bg-white rounded-3xl shadow-xl p-8 mb-16">
+        <div className="bg-white rounded-3xl shadow-xl p-8 mb-8">
           {processedImage && originalImage ? (
             <ImageCompare
               originalImage={originalImage}
@@ -127,6 +127,19 @@ export default function Home() {
             </div>
           )}
         </div>
+
+        {/* Tips Section */}
+        {!processedImage && !isLoading && (
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 mb-8">
+            <h3 className="font-semibold text-blue-900 mb-3">📷 Tips for Best Results:</h3>
+            <ul className="space-y-2 text-sm text-blue-800">
+              <li>• <strong>Clear subject:</strong> Photos with a clear foreground (person, animal, or object) work best</li>
+              <li>• <strong>Good contrast:</strong> Subject should stand out from background</li>
+              <li>• <strong>Good lighting:</strong> Well-lit photos produce better results</li>
+              <li>• <strong>Supported formats:</strong> JPG, PNG, WebP (max 10MB)</li>
+            </ul>
+          </div>
+        )}
 
         {/* Features Section */}
         {!processedImage && !isLoading && (

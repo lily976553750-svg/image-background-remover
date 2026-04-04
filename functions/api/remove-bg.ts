@@ -63,8 +63,28 @@ export async function onRequestPost(context: CloudflareContext) {
         );
       }
 
+      // 解析 remove.bg 的错误信息
+      let userMessage = "Failed to process image. Please try a different image.";
+      try {
+        const errorData = JSON.parse(errorText);
+        if (errorData.errors && errorData.errors[0]) {
+          const code = errorData.errors[0].code;
+
+          // 根据错误代码返回友好的提示
+          if (code === 'unknown_foreground') {
+            userMessage = "Could not identify a clear subject in the image. Please use a photo with a clear foreground (person, animal, or object).";
+          } else if (code === 'invalid_image') {
+            userMessage = "Invalid image format. Please use JPG, PNG, or WebP format.";
+          } else if (code === 'file_size') {
+            userMessage = "Image file is too large. Maximum size is 10MB.";
+          }
+        }
+      } catch (e) {
+        // 解析失败，使用默认消息
+      }
+
       return new Response(
-        JSON.stringify({ error: "Failed to process image" }),
+        JSON.stringify({ error: userMessage }),
         { status: response.status, headers: { "Content-Type": "application/json" } }
       );
     }
