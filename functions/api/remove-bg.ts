@@ -68,6 +68,8 @@ export async function onRequestPost(context: CloudflareContext) {
 
       // 解析 remove.bg 的错误信息
       let errorCode = "unknown_error";
+      let errorMessage = "Could not identify a clear subject in this image.";
+      
       try {
         const errorData = JSON.parse(errorText);
         if (errorData.errors && errorData.errors[0]) {
@@ -75,10 +77,13 @@ export async function onRequestPost(context: CloudflareContext) {
           
           if (code === 'unknown_foreground') {
             errorCode = "no_clear_subject";
+            errorMessage = "Could not identify a clear subject in this image.";
           } else if (code === 'invalid_image') {
             errorCode = "invalid_image";
+            errorMessage = "Invalid image format. Please use JPG, PNG, or WebP.";
           } else if (code === 'file_size') {
             errorCode = "file_too_large";
+            errorMessage = "Image file is too large. Maximum size is 10MB.";
           }
         }
       } catch (e) {
@@ -88,7 +93,7 @@ export async function onRequestPost(context: CloudflareContext) {
       return new Response(
         JSON.stringify({ 
           error: errorCode,
-          message: "Could not identify a clear subject in this image."
+          message: errorMessage
         }),
         { status: response.status, headers: { "Content-Type": "application/json" } }
       );
