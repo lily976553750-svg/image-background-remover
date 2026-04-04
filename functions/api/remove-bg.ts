@@ -64,11 +64,7 @@ export async function onRequestPost(context: CloudflareContext) {
       }
 
       return new Response(
-        JSON.stringify({
-          error: "Failed to process image",
-          details: errorText,
-          status: response.status
-        }),
+        JSON.stringify({ error: "Failed to process image" }),
         { status: response.status, headers: { "Content-Type": "application/json" } }
       );
     }
