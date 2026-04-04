@@ -58,33 +58,38 @@ export async function onRequestPost(context: CloudflareContext) {
 
       if (response.status === 402) {
         return new Response(
-          JSON.stringify({ error: "API quota exceeded. Please try again later." }),
+          JSON.stringify({ 
+            error: "quota_exceeded",
+            message: "API quota exceeded. Please try again later."
+          }),
           { status: 429, headers: { "Content-Type": "application/json" } }
         );
       }
 
       // 解析 remove.bg 的错误信息
-      let userMessage = "Failed to process image. Please try a different image.";
+      let errorCode = "unknown_error";
       try {
         const errorData = JSON.parse(errorText);
         if (errorData.errors && errorData.errors[0]) {
           const code = errorData.errors[0].code;
-
-          // 根据错误代码返回友好的提示
+          
           if (code === 'unknown_foreground') {
-            userMessage = "Could not identify a clear subject in the image. Please use a photo with a clear foreground (person, animal, or object).";
+            errorCode = "no_clear_subject";
           } else if (code === 'invalid_image') {
-            userMessage = "Invalid image format. Please use JPG, PNG, or WebP format.";
+            errorCode = "invalid_image";
           } else if (code === 'file_size') {
-            userMessage = "Image file is too large. Maximum size is 10MB.";
+            errorCode = "file_too_large";
           }
         }
       } catch (e) {
-        // 解析失败，使用默认消息
+        // 解析失败，使用默认错误码
       }
 
       return new Response(
-        JSON.stringify({ error: userMessage }),
+        JSON.stringify({ 
+          error: errorCode,
+          message: "Could not identify a clear subject in this image."
+        }),
         { status: response.status, headers: { "Content-Type": "application/json" } }
       );
     }

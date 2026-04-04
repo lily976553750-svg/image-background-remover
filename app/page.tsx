@@ -37,12 +37,29 @@ export default function Home() {
       if (!response.ok) {
         // 安全地解析错误响应
         let errorMsg = "Failed to process image";
+        let errorCode = "unknown";
+        
         try {
           const data = await response.json();
-          errorMsg = data.error || errorMsg;
+          errorCode = data.error || "unknown";
+          errorMsg = data.message || errorMsg;
         } catch {
           errorMsg = `Server error (${response.status})`;
         }
+        
+        // 根据错误代码设置用户友好的提示
+        if (errorCode === "no_clear_subject") {
+          setError("no_clear_subject");
+        } else if (errorCode === "quota_exceeded") {
+          setError("API quota exceeded. Please try again later.");
+        } else if (errorCode === "invalid_image") {
+          setError("Invalid image format. Please use JPG, PNG, or WebP.");
+        } else if (errorCode === "file_too_large") {
+          setError("Image file is too large. Maximum size is 10MB.");
+        } else {
+          setError(errorMsg);
+        }
+        
         throw new Error(errorMsg);
       }
 
@@ -122,8 +139,46 @@ export default function Home() {
           )}
 
           {error && (
-            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-center">
-              {error}
+            <div className="mt-6 p-6 bg-amber-50 border border-amber-200 rounded-xl">
+              <div className="text-center mb-4">
+                <span className="text-3xl">😕</span>
+                <h3 className="text-lg font-semibold text-amber-900 mt-2">
+                  Oops! We couldn't identify the subject in this image.
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div className="bg-white rounded-lg p-4 border border-green-200">
+                  <h4 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
+                    <span>✓</span> What works best:
+                  </h4>
+                  <ul className="space-y-1 text-gray-700">
+                    <li>• Portraits and selfies</li>
+                    <li>• Product photos with clear backgrounds</li>
+                    <li>• Pet photos with good lighting</li>
+                  </ul>
+                </div>
+
+                <div className="bg-white rounded-lg p-4 border border-red-200">
+                  <h4 className="font-semibold text-red-800 mb-2 flex items-center gap-2">
+                    <span>✗</span> What doesn't work:
+                  </h4>
+                  <ul className="space-y-1 text-gray-700">
+                    <li>• Landscapes or scenery</li>
+                    <li>• Abstract patterns</li>
+                    <li>• Dark or blurry images</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="mt-4 text-center">
+                <button
+                  onClick={handleReset}
+                  className="inline-flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                >
+                  <span>📷</span> Try another photo
+                </button>
+              </div>
             </div>
           )}
         </div>
