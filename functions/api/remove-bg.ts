@@ -33,15 +33,9 @@ export async function onRequestPost(context: CloudflareContext) {
       );
     }
 
-    // Convert file to base64 (in memory)
-    const imageBuffer = await imageFile.arrayBuffer();
-    const base64Image = btoa(
-      String.fromCharCode(...new Uint8Array(imageBuffer))
-    );
-
-    // Call remove.bg API
+    // Call remove.bg API with file directly
     const removeBgFormData = new FormData();
-    removeBgFormData.append("image_file_b64", base64Image);
+    removeBgFormData.append("image_file", imageFile);
     removeBgFormData.append("size", "auto");
 
     const response = await fetch("https://api.remove.bg/v1.0/removebg", {
