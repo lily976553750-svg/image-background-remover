@@ -1,8 +1,8 @@
-# Cloudflare Pages Configuration
-name = "bg-remover"
+name = "image-background-remover"
 compatibility_date = "2024-01-01"
-pages_build_output_dir = "out"
 
-[vars]
-# Environment variables (non-secret)
-# REMOVEBG_API_KEY should be set via dashboard or wrangler secret
+[site]
+bucket = "./out"
+
+# Cloudflare Pages Functions 配置
+# functions 目录会自动被检测
