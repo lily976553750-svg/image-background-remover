@@ -1,0 +1,27 @@
+# 禁用 HTML 缓存，确保用户总是获取最新版本
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+
+# HTML 文件不缓存
+/*.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# 首页不缓存
+/
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# JS 和 CSS 文件（Next.js 已经带有 hash，可以长缓存）
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# 图片等静态资源
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+/*.ico
+  Cache-Control: public, max-age=31536000, immutable
