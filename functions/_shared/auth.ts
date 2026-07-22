@@ -4,6 +4,7 @@ export interface AuthEnv {
   AUTH_SECRET: string;
   AUTH_REDIRECT_URI?: string;
   SITE_URL?: string;
+  DB?: D1Database;
 }
 
 export interface GoogleProfile {
@@ -19,6 +20,16 @@ export interface SessionUser {
   email: string;
   name?: string;
   picture?: string;
+}
+
+export interface D1Database {
+  prepare(query: string): D1PreparedStatement;
+}
+
+interface D1PreparedStatement {
+  bind(...values: unknown[]): D1PreparedStatement;
+  first<T = unknown>(): Promise<T | null>;
+  run(): Promise<unknown>;
 }
 
 const encoder = new TextEncoder();

@@ -11,6 +11,7 @@ import {
   verifySignedValue,
   base64UrlDecode,
 } from "../../_shared/auth";
+import { saveGoogleLogin } from "../../_shared/db";
 
 interface CloudflareContext {
   request: Request;
@@ -77,6 +78,8 @@ export async function onRequestGet(context: CloudflareContext) {
     if (!profile.email || !profile.email_verified) {
       return redirectWithError(request, env, "email_not_verified");
     }
+
+    await saveGoogleLogin(env, profile, request);
 
     const session = await createSession(env, {
       id: profile.sub,
