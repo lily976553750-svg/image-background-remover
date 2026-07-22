@@ -42,4 +42,4 @@ yarn-error.log*
 .wrangler
 .dev.vars
 .cloudflare.env
-
+.codex-secrets.local.json

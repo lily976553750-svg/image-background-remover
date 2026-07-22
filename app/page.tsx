@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import Uploader from "@/components/Uploader";
 import ImageCompare from "@/components/ImageCompare";
 import Footer from "@/components/Footer";
+import AuthButton from "@/components/AuthButton";
 import { Zap, Shield, Clock, Sparkles } from "lucide-react";
 
 export default function Home() {
@@ -99,12 +100,13 @@ export default function Home() {
             <span className="text-xl font-bold text-gray-800">BG Remover</span>
           </div>
           <nav className="flex items-center gap-6">
-            <a href="#how-it-works" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+            <a href="#how-it-works" className="hidden text-sm text-gray-600 hover:text-gray-900 transition-colors sm:inline">
               How it works
             </a>
-            <a href="#faq" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+            <a href="#faq" className="hidden text-sm text-gray-600 hover:text-gray-900 transition-colors sm:inline">
               FAQ
             </a>
+            <AuthButton />
           </nav>
         </div>
       </header>
@@ -119,8 +121,8 @@ export default function Home() {
               <span className="text-blue-500"> For Free</span>
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              AI-powered background removal in seconds. No signup required.
-              Download your transparent PNG instantly.
+              AI-powered background removal in seconds. Use it instantly, or
+              sign in with Google for a trusted account experience.
             </p>
           </div>
         )}
@@ -145,7 +147,7 @@ export default function Home() {
                   <div className="text-center mb-4">
                     <span className="text-3xl">😕</span>
                     <h3 className="text-lg font-semibold text-amber-900 mt-2">
-                      Oops! We couldn't identify the subject in this image.
+                      Oops! We could not identify the subject in this image.
                     </h3>
                   </div>
 
@@ -163,7 +165,7 @@ export default function Home() {
 
                     <div className="bg-white rounded-lg p-4 border border-red-200">
                       <h4 className="font-semibold text-red-800 mb-2 flex items-center gap-2">
-                        <span>✗</span> What doesn't work:
+                        <span>✗</span> What does not work:
                       </h4>
                       <ul className="space-y-1 text-gray-700">
                         <li>• Landscapes or scenery</li>
@@ -241,10 +243,10 @@ export default function Home() {
                     <Clock className="w-7 h-7 text-purple-500" />
                   </div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    No Signup
+                    Trusted Sign-In
                   </h3>
                   <p className="text-gray-600">
-                    Start immediately. No account or registration required.
+                    Continue with Google when you want a verified account.
                   </p>
                 </div>
               </div>
@@ -297,6 +299,7 @@ export default function Home() {
                 </summary>
                 <p className="px-4 pb-4 text-gray-600">
                   Yes! You can remove backgrounds from images for free. We offer generous free usage with no signup required.
+                  Google sign-in is optional and helps provide a trusted account experience.
                 </p>
               </details>
 
