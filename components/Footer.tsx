@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer className="w-full border-t border-gray-200 py-8 mt-16">
@@ -7,6 +9,12 @@ export default function Footer() {
             © 2024 BG Remover. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
+            <Link
+              href="/pricing"
+              className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              Pricing
+            </Link>
             <a
               href="#"
               className="text-sm text-gray-500 hover:text-gray-700 transition-colors"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Link from "next/link";
 import Uploader from "@/components/Uploader";
 import ImageCompare from "@/components/ImageCompare";
 import Footer from "@/components/Footer";
@@ -106,6 +107,9 @@ export default function Home() {
             <a href="#faq" className="hidden text-sm text-gray-600 hover:text-gray-900 transition-colors sm:inline">
               FAQ
             </a>
+            <Link href="/pricing" className="hidden text-sm text-gray-600 hover:text-gray-900 transition-colors sm:inline">
+              Pricing
+            </Link>
             <AuthButton />
           </nav>
         </div>
