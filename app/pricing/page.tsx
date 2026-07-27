@@ -1,5 +1,6 @@
 import AuthButton from "@/components/AuthButton";
 import Footer from "@/components/Footer";
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -12,9 +13,16 @@ import {
   X,
 } from "lucide-react";
 
+export const metadata: Metadata = {
+  title: "Pricing - BG Remover",
+  description:
+    "Simple monthly pricing for BG Remover. Start free, upgrade for more monthly image credits, and never pay automatic overage charges.",
+};
+
 const corePlans = [
   {
     name: "Free",
+    label: "Try it",
     price: "$0",
     period: "forever",
     allowance: "3 images",
@@ -30,6 +38,7 @@ const corePlans = [
   },
   {
     name: "Starter",
+    label: "Occasional use",
     price: "$8.99",
     period: "per month",
     allowance: "25 images",
@@ -45,6 +54,7 @@ const corePlans = [
   },
   {
     name: "Creator",
+    label: "Recommended",
     price: "$19.99",
     period: "per month",
     allowance: "80 images",
@@ -84,6 +94,29 @@ const rules = [
   "Images are limited to 10MB and supported formats are JPG, PNG, and WebP.",
 ];
 
+const faqs = [
+  {
+    question: "What happens when I run out of credits?",
+    answer:
+      "You will see an upgrade prompt. BG Remover does not automatically charge you for extra usage.",
+  },
+  {
+    question: "Do unused monthly credits roll over?",
+    answer:
+      "No. Monthly allowances refresh each billing month and unused credits do not carry over.",
+  },
+  {
+    question: "What counts as 1 credit?",
+    answer:
+      "Only a successful background removal counts as 1 credit. Failed uploads, oversized files, unsupported formats, and unclear subjects do not use credits.",
+  },
+  {
+    question: "Why are Pro and Business not shown as main plans?",
+    answer:
+      "Most users only need Starter or Creator. Pro and Business are reserved for higher-volume workflows and can be activated when demand is clear.",
+  },
+];
+
 export default function PricingPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -115,18 +148,43 @@ export default function PricingPage() {
 
       <main className="flex-1 w-full">
         <section className="max-w-6xl mx-auto px-4 py-14 md:py-18">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 mb-5">
-              <ShieldCheck className="h-4 w-4" />
-              Simple monthly image credits
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_360px] lg:items-end">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 mb-5">
+                <ShieldCheck className="h-4 w-4" />
+                Simple monthly image credits
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-950 mb-4">
+                Pricing for clean, transparent product images.
+              </h1>
+              <p className="text-lg text-gray-600 max-w-2xl">
+                Start free, upgrade when you need more, and keep control of your
+                monthly usage. Overages never trigger automatic charges.
+              </p>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-950 mb-4">
-              Pricing for clean, transparent product images.
-            </h1>
-            <p className="text-lg text-gray-600 max-w-2xl">
-              Start free, upgrade when you need more, and keep control of your
-              monthly usage. Overages never trigger automatic charges.
-            </p>
+
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+              <div className="flex items-center justify-between rounded-lg bg-white p-1 text-sm font-semibold shadow-sm">
+                <span className="rounded-md bg-blue-600 px-4 py-2 text-white">
+                  Monthly
+                </span>
+                <span className="px-4 py-2 text-gray-500">Annual later</span>
+              </div>
+              <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+                <div className="rounded-lg bg-white p-3">
+                  <div className="text-lg font-bold text-gray-950">10MB</div>
+                  <div className="text-xs text-gray-500">max file</div>
+                </div>
+                <div className="rounded-lg bg-white p-3">
+                  <div className="text-lg font-bold text-gray-950">0</div>
+                  <div className="text-xs text-gray-500">overage fees</div>
+                </div>
+                <div className="rounded-lg bg-white p-3">
+                  <div className="text-lg font-bold text-gray-950">1:1</div>
+                  <div className="text-xs text-gray-500">success credit</div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -148,6 +206,9 @@ export default function PricingPage() {
                     </div>
                   ) : null}
                   <div className="mb-6">
+                    <div className="mb-3 text-sm font-semibold text-blue-600">
+                      {plan.label}
+                    </div>
                     <h2 className="text-xl font-bold text-gray-950">{plan.name}</h2>
                     <p className="mt-2 min-h-12 text-sm leading-6 text-gray-600">
                       {plan.description}
@@ -191,6 +252,10 @@ export default function PricingPage() {
                   </ul>
                 </article>
               ))}
+            </div>
+            <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
+              Most new users should start with Free or Starter. Creator is the
+              best fit once background removal becomes part of a weekly workflow.
             </div>
           </div>
         </section>
@@ -260,6 +325,38 @@ export default function PricingPage() {
                 <ArrowRight className="h-4 w-4" />
               </a>
             </aside>
+          </div>
+        </section>
+
+        <section className="border-t border-gray-100 bg-gray-50">
+          <div className="max-w-6xl mx-auto px-4 py-12">
+            <div className="max-w-2xl">
+              <h2 className="text-2xl font-bold text-gray-950">
+                Pricing questions
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                The rules are intentionally conservative so users understand
+                exactly when credits are used.
+              </p>
+            </div>
+            <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+              {faqs.map((faq) => (
+                <details
+                  key={faq.question}
+                  className="group rounded-lg border border-gray-200 bg-white p-4"
+                >
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 font-semibold text-gray-950">
+                    {faq.question}
+                    <span className="text-gray-400 transition-transform group-open:rotate-180">
+                      ▼
+                    </span>
+                  </summary>
+                  <p className="mt-3 text-sm leading-6 text-gray-600">
+                    {faq.answer}
+                  </p>
+                </details>
+              ))}
+            </div>
           </div>
         </section>
       </main>
