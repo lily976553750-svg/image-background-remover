@@ -45,6 +45,7 @@ export default function AuthButton() {
       credentials: "include",
     });
     setUser(null);
+    window.location.reload();
   };
 
   if (isLoading) {

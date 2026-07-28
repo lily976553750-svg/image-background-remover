@@ -1,19 +1,203 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import Uploader from "@/components/Uploader";
 import ImageCompare from "@/components/ImageCompare";
 import Footer from "@/components/Footer";
 import AuthButton from "@/components/AuthButton";
-import { Zap, Shield, Clock, Sparkles } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowUpRight,
+  CalendarDays,
+  CheckCircle2,
+  Clock,
+  LogIn,
+  Shield,
+  Sparkles,
+  Zap,
+} from "lucide-react";
+
+interface AccountUsage {
+  plan: string;
+  limit: number;
+  used: number;
+  remaining: number;
+  monthStart: string;
+  resetPolicy: string;
+}
+
+interface AccountState {
+  authenticated: boolean;
+  user?: {
+    email: string;
+    name?: string;
+    picture?: string;
+    plan?: string;
+  };
+  usage?: AccountUsage;
+}
+
+async function fetchAccountUsage() {
+  const response = await fetch("/api/account/usage", {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    return {
+      authenticated: false,
+    };
+  }
+
+  return (await response.json()) as AccountState;
+}
+
+function formatPlanName(plan: string) {
+  return plan.charAt(0).toUpperCase() + plan.slice(1);
+}
+
+function UsageSummary({ usage }: { usage: AccountUsage }) {
+  const usedPercent = usage.limit > 0 ? Math.min(100, (usage.used / usage.limit) * 100) : 0;
+
+  return (
+    <div className="mb-5 rounded-2xl border border-blue-100 bg-blue-50/70 p-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="flex items-center gap-2 text-sm font-semibold text-blue-900">
+            <CheckCircle2 className="h-4 w-4" />
+            {formatPlanName(usage.plan)} plan
+          </div>
+          <p className="mt-1 text-sm text-blue-800">
+            {usage.remaining} of {usage.limit} images left this month
+          </p>
+        </div>
+        <Link
+          href="/pricing"
+          className="inline-flex items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-blue-700 transition-colors hover:border-blue-300 hover:text-blue-900"
+        >
+          View plans
+          <ArrowUpRight className="h-4 w-4" />
+        </Link>
+      </div>
+      <div className="mt-4 h-2 overflow-hidden rounded-full bg-white">
+        <div
+          className="h-full rounded-full bg-blue-600 transition-all"
+          style={{ width: `${usedPercent}%` }}
+        />
+      </div>
+      <div className="mt-3 flex items-center gap-2 text-xs text-blue-700">
+        <CalendarDays className="h-3.5 w-3.5" />
+        Monthly credits reset each billing month and do not roll over.
+      </div>
+    </div>
+  );
+}
+
+function SignInBeforeUpload() {
+  return (
+    <div className="rounded-2xl border border-blue-200 bg-blue-50 px-6 py-10 text-center">
+      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-white text-blue-600 shadow-sm">
+        <LogIn className="h-7 w-7" />
+      </div>
+      <h2 className="text-2xl font-bold text-gray-900">Sign in before uploading</h2>
+      <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-gray-600">
+        Start with 3 free background removals every month. Google sign-in keeps
+        your credits attached to your account and prevents surprise overage charges.
+      </p>
+      <a
+        href="/api/auth/login?next=/"
+        className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+      >
+        <LogIn className="h-4 w-4" />
+        Continue with Google
+      </a>
+      <div className="mt-4 text-xs text-gray-500">
+        JPG, PNG, and WebP supported. Max file size: 10MB.
+      </div>
+    </div>
+  );
+}
+
+function QuotaEmpty({ usage }: { usage: AccountUsage }) {
+  return (
+    <div className="rounded-2xl border border-amber-200 bg-amber-50 px-6 py-10 text-center">
+      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-white text-amber-700 shadow-sm">
+        <AlertCircle className="h-7 w-7" />
+      </div>
+      <h2 className="text-2xl font-bold text-gray-900">Monthly credits used</h2>
+      <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-amber-900">
+        You used {usage.used} of {usage.limit} images on the {formatPlanName(usage.plan)} plan.
+        We do not charge automatically for extra usage.
+      </p>
+      <Link
+        href="/pricing"
+        className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-gray-950 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
+      >
+        Upgrade to continue
+        <ArrowUpRight className="h-4 w-4" />
+      </Link>
+    </div>
+  );
+}
+
+function AccountLoading() {
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-gray-50 px-6 py-12">
+      <div className="mx-auto h-5 w-48 animate-pulse rounded-full bg-gray-200" />
+      <div className="mx-auto mt-4 h-3 w-72 max-w-full animate-pulse rounded-full bg-gray-200" />
+      <div className="mx-auto mt-8 h-11 w-44 animate-pulse rounded-lg bg-gray-200" />
+    </div>
+  );
+}
 
 export default function Home() {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [processedImage, setProcessedImage] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isAccountLoading, setIsAccountLoading] = useState(true);
+  const [accountState, setAccountState] = useState<AccountState | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const loadUsage = useCallback(async () => {
+    try {
+      const data = await fetchAccountUsage();
+      setAccountState(data);
+    } catch {
+      setAccountState({
+        authenticated: false,
+      });
+    } finally {
+      setIsAccountLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    fetchAccountUsage()
+      .then((data) => {
+        if (isMounted) {
+          setAccountState(data);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setAccountState({
+            authenticated: false,
+          });
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsAccountLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleUpload = useCallback(async (file: File) => {
     setIsLoading(true);
@@ -56,6 +240,7 @@ export default function Home() {
           setError("login_required");
         } else if (errorCode === "usage_limit_exceeded") {
           setError("usage_limit_exceeded");
+          loadUsage();
         } else if (errorCode === "quota_exceeded") {
           setError("API quota exceeded. Please try again later.");
         } else if (errorCode === "invalid_image") {
@@ -78,13 +263,14 @@ export default function Home() {
       });
 
       setProcessedImage(base64);
+      loadUsage();
     } catch (err) {
       console.error("Upload error:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [loadUsage]);
 
   const handleReset = useCallback(() => {
     setOriginalImage(null);
@@ -92,6 +278,11 @@ export default function Home() {
     setFileName("");
     setError(null);
   }, []);
+
+  const canUpload =
+    Boolean(accountState?.authenticated) &&
+    Boolean(accountState?.usage) &&
+    (accountState?.usage?.remaining ?? 0) > 0;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -144,8 +335,23 @@ export default function Home() {
               fileName={fileName}
               onReset={handleReset}
             />
+          ) : isAccountLoading ? (
+            <AccountLoading />
+          ) : !accountState?.authenticated ? (
+            <SignInBeforeUpload />
+          ) : accountState.usage && accountState.usage.remaining <= 0 ? (
+            <QuotaEmpty usage={accountState.usage} />
           ) : (
-            <Uploader onUpload={handleUpload} isLoading={isLoading} />
+            <>
+              {accountState.usage ? <UsageSummary usage={accountState.usage} /> : null}
+              {canUpload ? (
+                <Uploader onUpload={handleUpload} isLoading={isLoading} />
+              ) : (
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 px-6 py-8 text-center text-sm text-amber-900">
+                  We could not confirm your credits just now. Please refresh and try again.
+                </div>
+              )}
+            </>
           )}
 
           {error && (
