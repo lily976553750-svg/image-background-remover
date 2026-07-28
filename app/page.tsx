@@ -52,6 +52,10 @@ export default function Home() {
         // 根据错误代码设置用户友好的提示
         if (errorCode === "no_clear_subject") {
           setError("no_clear_subject");
+        } else if (errorCode === "login_required") {
+          setError("login_required");
+        } else if (errorCode === "usage_limit_exceeded") {
+          setError("usage_limit_exceeded");
         } else if (errorCode === "quota_exceeded") {
           setError("API quota exceeded. Please try again later.");
         } else if (errorCode === "invalid_image") {
@@ -125,8 +129,8 @@ export default function Home() {
               <span className="text-blue-500"> For Free</span>
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              AI-powered background removal in seconds. Use it instantly, or
-              sign in with Google for a trusted account experience.
+              AI-powered background removal in seconds. Sign in with Google to
+              use your monthly credits and download transparent PNGs.
             </p>
           </div>
         )}
@@ -188,6 +192,38 @@ export default function Home() {
                     </button>
                   </div>
                 </>
+              ) : error === "login_required" ? (
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-amber-900">
+                    Sign in to use your free monthly credits.
+                  </h3>
+                  <p className="mt-2 text-sm text-amber-800">
+                    BG Remover uses Google sign-in to keep usage fair and protect
+                    the service from automated abuse.
+                  </p>
+                  <a
+                    href="/api/auth/login"
+                    className="mt-4 inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+                  >
+                    Sign in with Google
+                  </a>
+                </div>
+              ) : error === "usage_limit_exceeded" ? (
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-amber-900">
+                    You have used this month&apos;s image credits.
+                  </h3>
+                  <p className="mt-2 text-sm text-amber-800">
+                    We do not charge automatically for overages. Upgrade when
+                    you are ready to continue.
+                  </p>
+                  <a
+                    href="/pricing"
+                    className="mt-4 inline-flex items-center justify-center rounded-lg bg-gray-950 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-gray-800"
+                  >
+                    View plans
+                  </a>
+                </div>
               ) : (
                 <div className="text-center text-amber-900">
                   {error}
@@ -302,8 +338,8 @@ export default function Home() {
                   </span>
                 </summary>
                 <p className="px-4 pb-4 text-gray-600">
-                  Yes! You can remove backgrounds from images for free. We offer generous free usage with no signup required.
-                  Google sign-in is optional and helps provide a trusted account experience.
+                  Yes. Sign in with Google to use your free monthly credits.
+                  This keeps usage fair and prevents surprise charges.
                 </p>
               </details>
 

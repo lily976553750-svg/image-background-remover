@@ -1,7 +1,15 @@
+import { AuthEnv, jsonResponse, readSession } from "../_shared/auth";
+import {
+  ensureUserFromSession,
+  getMonthlySuccessfulRemovals,
+  getPlanLimit,
+  recordSuccessfulRemoval,
+} from "../_shared/db";
+
 // Cloudflare Pages Function for remove.bg API
 interface CloudflareContext {
   request: Request;
-  env: {
+  env: AuthEnv & {
     REMOVEBG_API_KEY: string;
   };
 }
@@ -9,6 +17,53 @@ interface CloudflareContext {
 export async function onRequestPost(context: CloudflareContext) {
   try {
     const { request, env } = context;
+
+    const sessionUser = await readSession(request, env);
+    if (!sessionUser) {
+      return jsonResponse(
+        {
+          error: "login_required",
+          message: "Please sign in with Google to use your free monthly credits.",
+        },
+        { status: 401 }
+      );
+    }
+
+    if (!env.DB) {
+      return jsonResponse(
+        {
+          error: "usage_tracking_unavailable",
+          message: "Usage tracking is temporarily unavailable. Please try again later.",
+        },
+        { status: 503 }
+      );
+    }
+
+    const account = await ensureUserFromSession(env, sessionUser);
+    if (!account) {
+      return jsonResponse(
+        {
+          error: "account_unavailable",
+          message: "Could not load your account. Please sign out and sign in again.",
+        },
+        { status: 503 }
+      );
+    }
+
+    const planLimit = getPlanLimit(account.plan);
+    const usedThisMonth = await getMonthlySuccessfulRemovals(env, account.id);
+    if (usedThisMonth >= planLimit) {
+      return jsonResponse(
+        {
+          error: "usage_limit_exceeded",
+          message: `You have used all ${planLimit} images in your ${account.plan} plan this month. Please upgrade to continue.`,
+          plan: account.plan,
+          limit: planLimit,
+          used: usedThisMonth,
+        },
+        { status: 402 }
+      );
+    }
 
     // Parse form data
     const formData = await request.formData();
@@ -21,16 +76,41 @@ export async function onRequestPost(context: CloudflareContext) {
       });
     }
 
+    if (!(imageFile instanceof File)) {
+      return jsonResponse(
+        {
+          error: "invalid_image",
+          message: "Invalid image upload. Please use JPG, PNG, or WebP.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const validTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!validTypes.includes(imageFile.type)) {
+      return jsonResponse(
+        {
+          error: "invalid_image",
+          message: "Invalid image format. Please use JPG, PNG, or WebP.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (imageFile.size > 10 * 1024 * 1024) {
+      return jsonResponse(
+        {
+          error: "file_too_large",
+          message: "Image file is too large. Maximum size is 10MB.",
+        },
+        { status: 400 }
+      );
+    }
+
     // Check API Key
     const apiKey = env.REMOVEBG_API_KEY;
     if (!apiKey) {
-      return new Response(
-        JSON.stringify({ error: "API key not configured" }),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return jsonResponse({ error: "API key not configured" }, { status: 500 });
     }
 
     // Call remove.bg API with file directly
@@ -85,21 +165,30 @@ export async function onRequestPost(context: CloudflareContext) {
             errorMessage = title || errorMessage;
           }
         }
-      } catch (e) {
+      } catch {
         // 解析失败，使用默认错误消息
       }
 
-      return new Response(
-        JSON.stringify({ 
+      return jsonResponse(
+        {
           error: errorCode,
           message: errorMessage
-        }),
-        { status: response.status, headers: { "Content-Type": "application/json" } }
+        },
+        { status: response.status }
       );
     }
 
     // Get processed image (in memory)
     const resultBuffer = await response.arrayBuffer();
+
+    await recordSuccessfulRemoval(env, account.id, {
+      fileName: imageFile.name,
+      fileSize: imageFile.size,
+      fileType: imageFile.type,
+      plan: account.plan,
+      usedBeforeRequest: usedThisMonth,
+      monthlyLimit: planLimit,
+    });
 
     // Return image directly (no storage)
     return new Response(resultBuffer, {
