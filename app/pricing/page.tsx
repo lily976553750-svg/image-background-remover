@@ -1,5 +1,6 @@
 import AuthButton from "@/components/AuthButton";
 import Footer from "@/components/Footer";
+import PricingCheckoutButton from "@/components/PricingCheckoutButton";
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -44,7 +45,7 @@ const corePlans = [
     allowance: "25 images",
     description: "For personal projects, profile images, and occasional product photos.",
     cta: "Choose Starter",
-    href: "mailto:support@bg-remover.xyz?subject=Starter%20plan",
+    href: "paypal:starter",
     features: [
       "25 successful background removals per month",
       "Google account sign-in",
@@ -60,7 +61,7 @@ const corePlans = [
     allowance: "80 images",
     description: "For creators, small shops, and repeat image cleanup workflows.",
     cta: "Choose Creator",
-    href: "mailto:support@bg-remover.xyz?subject=Creator%20plan",
+    href: "paypal:creator",
     highlighted: true,
     features: [
       "80 successful background removals per month",
@@ -239,7 +240,6 @@ export default function PricingPage() {
                     }`}
                   >
                     {plan.cta}
-                    <ArrowRight className="h-4 w-4" />
                   </PlanAction>
 
                   <ul className="space-y-3 text-sm text-gray-700">
@@ -375,10 +375,22 @@ function PlanAction({
   className: string;
   children: React.ReactNode;
 }) {
+  if (href === "paypal:starter" || href === "paypal:creator") {
+    return (
+      <PricingCheckoutButton
+        plan={href === "paypal:starter" ? "starter" : "creator"}
+        className={className}
+      >
+        {children}
+      </PricingCheckoutButton>
+    );
+  }
+
   if (href.startsWith("/")) {
     return (
       <Link href={href} className={className}>
         {children}
+        <ArrowRight className="h-4 w-4" />
       </Link>
     );
   }
@@ -386,6 +398,7 @@ function PlanAction({
   return (
     <a href={href} className={className}>
       {children}
+      <ArrowRight className="h-4 w-4" />
     </a>
   );
 }

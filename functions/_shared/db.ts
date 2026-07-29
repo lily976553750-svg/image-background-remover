@@ -14,6 +14,14 @@ export const PLAN_LIMITS: Record<string, number> = {
   business: 500,
 };
 
+export const PAID_PLANS = ["starter", "creator"] as const;
+
+export type PaidPlan = (typeof PAID_PLANS)[number];
+
+export function isPaidPlan(plan: string): plan is PaidPlan {
+  return PAID_PLANS.includes(plan as PaidPlan);
+}
+
 export async function saveGoogleLogin(
   env: AuthEnv,
   profile: GoogleProfile,
@@ -164,5 +172,128 @@ export async function recordSuccessfulRemoval(
       `
     )
     .bind(userId, JSON.stringify(metadata), new Date().toISOString())
+    .run();
+}
+
+export async function upsertSubscription(
+  env: AuthEnv,
+  input: {
+    id: string;
+    userId: string;
+    providerSubscriptionId: string;
+    plan: string;
+    status: string;
+    currentPeriodStart?: string | null;
+    currentPeriodEnd?: string | null;
+    cancelAtPeriodEnd?: boolean;
+  }
+) {
+  if (!env.DB) return;
+
+  const now = new Date().toISOString();
+
+  await env.DB
+    .prepare(
+      `
+      INSERT INTO subscriptions (
+        id, user_id, provider, provider_subscription_id, plan, status,
+        current_period_start, current_period_end, cancel_at_period_end,
+        created_at, updated_at
+      )
+      VALUES (?, ?, 'paypal', ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(id) DO UPDATE SET
+        user_id = excluded.user_id,
+        provider_subscription_id = excluded.provider_subscription_id,
+        plan = excluded.plan,
+        status = excluded.status,
+        current_period_start = excluded.current_period_start,
+        current_period_end = excluded.current_period_end,
+        cancel_at_period_end = excluded.cancel_at_period_end,
+        updated_at = excluded.updated_at
+      `
+    )
+    .bind(
+      input.id,
+      input.userId,
+      input.providerSubscriptionId,
+      input.plan,
+      input.status,
+      input.currentPeriodStart || null,
+      input.currentPeriodEnd || null,
+      input.cancelAtPeriodEnd ? 1 : 0,
+      now,
+      now
+    )
+    .run();
+}
+
+export async function updateUserPlan(env: AuthEnv, userId: string, plan: string) {
+  if (!env.DB) return;
+
+  await env.DB
+    .prepare(
+      `
+      UPDATE users
+      SET plan = ?, updated_at = ?
+      WHERE id = ?
+      `
+    )
+    .bind(plan, new Date().toISOString(), userId)
+    .run();
+}
+
+export async function getSubscriptionByProviderId(
+  env: AuthEnv,
+  providerSubscriptionId: string
+) {
+  if (!env.DB) return null;
+
+  return env.DB
+    .prepare(
+      `
+      SELECT id, user_id AS userId, plan, status
+      FROM subscriptions
+      WHERE provider_subscription_id = ?
+      `
+    )
+    .bind(providerSubscriptionId)
+    .first<{ id: string; userId: string; plan: string; status: string }>();
+}
+
+export async function recordPayment(
+  env: AuthEnv,
+  input: {
+    id: string;
+    userId: string;
+    providerPaymentId: string;
+    amountCents: number;
+    currency: string;
+    status: string;
+    metadata: Record<string, unknown>;
+  }
+) {
+  if (!env.DB) return;
+
+  await env.DB
+    .prepare(
+      `
+      INSERT INTO payments (
+        id, user_id, provider, provider_payment_id, amount_cents,
+        currency, status, metadata_json, created_at
+      )
+      VALUES (?, ?, 'paypal', ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(id) DO NOTHING
+      `
+    )
+    .bind(
+      input.id,
+      input.userId,
+      input.providerPaymentId,
+      input.amountCents,
+      input.currency,
+      input.status,
+      JSON.stringify(input.metadata),
+      new Date().toISOString()
+    )
     .run();
 }

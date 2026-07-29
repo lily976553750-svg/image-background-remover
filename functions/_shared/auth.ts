@@ -4,6 +4,12 @@ export interface AuthEnv {
   AUTH_SECRET: string;
   AUTH_REDIRECT_URI?: string;
   SITE_URL?: string;
+  PAYPAL_MODE?: string;
+  PAYPAL_CLIENT_ID?: string;
+  PAYPAL_CLIENT_SECRET?: string;
+  PAYPAL_STARTER_PLAN_ID?: string;
+  PAYPAL_CREATOR_PLAN_ID?: string;
+  PAYPAL_WEBHOOK_ID?: string;
   DB?: D1Database;
 }
 
