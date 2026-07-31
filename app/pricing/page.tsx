@@ -15,9 +15,64 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Pricing - BG Remover",
+  title: "Pricing | BG Remover",
   description:
-    "Simple monthly pricing for BG Remover. Start free, upgrade for more monthly image credits, and never pay automatic overage charges.",
+    "Compare BG Remover pricing plans. Start free, upgrade to Starter or Creator monthly credits, and avoid automatic overage charges.",
+  alternates: {
+    canonical: "/pricing",
+  },
+  openGraph: {
+    title: "Pricing | BG Remover",
+    description:
+      "Compare monthly image credit plans for BG Remover.",
+    url: "https://bg-remover.xyz/pricing",
+    siteName: "BG Remover",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Pricing | BG Remover",
+    description:
+      "Compare monthly image credit plans for BG Remover.",
+  },
+};
+
+const pricingJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: "BG Remover",
+  description:
+    "Online background remover with monthly image credit plans.",
+  brand: {
+    "@type": "Brand",
+    name: "BG Remover",
+  },
+  offers: [
+    {
+      "@type": "Offer",
+      name: "Free",
+      price: "0",
+      priceCurrency: "USD",
+      url: "https://bg-remover.xyz/",
+      availability: "https://schema.org/InStock",
+    },
+    {
+      "@type": "Offer",
+      name: "Starter",
+      price: "8.99",
+      priceCurrency: "USD",
+      url: "https://bg-remover.xyz/pricing",
+      availability: "https://schema.org/InStock",
+    },
+    {
+      "@type": "Offer",
+      name: "Creator",
+      price: "19.99",
+      priceCurrency: "USD",
+      url: "https://bg-remover.xyz/pricing",
+      availability: "https://schema.org/InStock",
+    },
+  ],
 };
 
 const corePlans = [
@@ -121,6 +176,12 @@ const faqs = [
 export default function PricingPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(pricingJsonLd),
+        }}
+      />
       <header className="w-full py-6 px-4 border-b border-gray-100">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">

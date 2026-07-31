@@ -1,22 +1,55 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const siteUrl = "https://bg-remover.xyz";
+
 export const metadata: Metadata = {
-  title: "Free Background Remover - Remove Image Background Online",
-  description: "Remove image background for free. AI-powered, fast, and easy. Optional Google sign-in for a trusted account experience.",
-  keywords: ["background remover", "remove background", "transparent background", "image background remover", "free background remover"],
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "BG Remover",
+    template: "%s",
+  },
+  description:
+    "BG Remover removes image backgrounds online and returns transparent PNG downloads.",
+  applicationName: "BG Remover",
+  authors: [{ name: "BG Remover" }],
+  creator: "BG Remover",
+  publisher: "BG Remover",
+  keywords: [
+    "background remover",
+    "remove background",
+    "transparent background",
+    "image background remover",
+    "free background remover",
+  ],
   openGraph: {
-    title: "Free Background Remover - Remove Image Background Online",
-    description: "Remove image background for free. AI-powered, fast, and easy. Optional Google sign-in.",
+    title: "BG Remover",
+    description:
+      "Remove image backgrounds online and download transparent PNGs.",
+    url: siteUrl,
+    siteName: "BG Remover",
     type: "website",
-    images: ["/og-image.png"],
   },
   twitter: {
-    card: "summary_large_image",
-    title: "Free Background Remover",
-    description: "Remove image background for free. AI-powered, fast, and easy. Optional Google sign-in.",
-    images: ["/og-image.png"],
+    card: "summary",
+    title: "BG Remover",
+    description:
+      "Remove image backgrounds online and download transparent PNGs.",
   },
+};
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "BG Remover",
+  url: siteUrl,
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "BG Remover",
+  url: siteUrl,
 };
 
 export default function RootLayout({
@@ -27,6 +60,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([organizationJsonLd, websiteJsonLd]),
+          }}
+        />
         {children}
       </body>
     </html>
