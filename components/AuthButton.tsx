@@ -75,7 +75,7 @@ export default function AuthButton() {
       {user.picture ? (
         <img
           src={user.picture}
-          alt=""
+          alt={`${user.name || user.email} profile picture`}
           className="h-9 w-9 rounded-full border border-gray-200 object-cover"
           referrerPolicy="no-referrer"
         />
