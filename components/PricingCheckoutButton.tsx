@@ -92,6 +92,10 @@ export default function PricingCheckoutButton({
         Secure checkout by PayPal. You are charged only after approving the
         plan on PayPal.
       </p>
+      <p className="mt-1 text-center text-xs leading-5 text-gray-500">
+        For smoother checkout, use the email address connected to your PayPal
+        account.
+      </p>
     </div>
   );
 }

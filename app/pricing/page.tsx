@@ -342,7 +342,8 @@ export default function PricingPage() {
                   <h3 className="font-semibold text-gray-950">PayPal checkout</h3>
                   <p className="mt-1 text-sm leading-6 text-gray-600">
                     Prices are listed in USD. PayPal securely handles checkout
-                    and may ask you to sign in or complete a security check.
+                    and may ask for your PayPal email, phone number, or a
+                    security check.
                   </p>
                 </div>
               </div>
@@ -361,8 +362,8 @@ export default function PricingPage() {
                 <div>
                   <h3 className="font-semibold text-gray-950">Payment trouble?</h3>
                   <p className="mt-1 text-sm leading-6 text-gray-600">
-                    Try again later with a verified PayPal account email, or
-                    contact us if PayPal cannot approve the checkout.
+                    Try again later with the email linked to your PayPal
+                    account, or contact us if PayPal cannot approve checkout.
                   </p>
                 </div>
               </div>
