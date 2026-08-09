@@ -1,11 +1,15 @@
 import AuthButton from "@/components/AuthButton";
 import Footer from "@/components/Footer";
+import PaymentStatusNotice from "@/components/PaymentStatusNotice";
 import PricingCheckoutButton from "@/components/PricingCheckoutButton";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import {
   ArrowRight,
+  CircleDollarSign,
   Check,
+  CreditCard,
   Image as ImageIcon,
   Info,
   ShieldCheck,
@@ -171,6 +175,16 @@ const faqs = [
     answer:
       "Most users only need Starter or Creator. Pro and Business are reserved for higher-volume workflows and can be activated when demand is clear.",
   },
+  {
+    question: "Why does PayPal ask for a security check?",
+    answer:
+      "PayPal may ask for a captcha, login verification, or account check based on its own risk system. BG Remover cannot control that PayPal screen, and no charge is made until you approve the subscription on PayPal.",
+  },
+  {
+    question: "What if PayPal cannot set up a preapproved payment?",
+    answer:
+      "That usually means PayPal could not approve the subscription flow for that account, browser, network, or region at that moment. You can try again later, use a verified PayPal account email, or contact support.",
+  },
 ];
 
 export default function PricingPage() {
@@ -252,6 +266,9 @@ export default function PricingPage() {
 
         <section className="border-y border-gray-100 bg-gray-50">
           <div className="max-w-6xl mx-auto px-4 py-10">
+            <Suspense fallback={null}>
+              <PaymentStatusNotice />
+            </Suspense>
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
               {corePlans.map((plan) => (
                 <article
@@ -317,6 +334,38 @@ export default function PricingPage() {
             <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
               Most new users should start with Free or Starter. Creator is the
               best fit once background removal becomes part of a weekly workflow.
+            </div>
+            <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+              <div className="flex gap-3 rounded-lg border border-gray-200 bg-white p-4">
+                <CreditCard className="mt-0.5 h-5 w-5 flex-none text-blue-600" />
+                <div>
+                  <h3 className="font-semibold text-gray-950">PayPal checkout</h3>
+                  <p className="mt-1 text-sm leading-6 text-gray-600">
+                    Paid plans use PayPal subscriptions in USD. PayPal may ask
+                    you to sign in or complete a security check.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-3 rounded-lg border border-gray-200 bg-white p-4">
+                <ShieldCheck className="mt-0.5 h-5 w-5 flex-none text-green-600" />
+                <div>
+                  <h3 className="font-semibold text-gray-950">No charge before approval</h3>
+                  <p className="mt-1 text-sm leading-6 text-gray-600">
+                    If you cancel or PayPal blocks the checkout, no subscription
+                    is activated and no charge is made.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-3 rounded-lg border border-gray-200 bg-white p-4">
+                <CircleDollarSign className="mt-0.5 h-5 w-5 flex-none text-amber-600" />
+                <div>
+                  <h3 className="font-semibold text-gray-950">Payment trouble?</h3>
+                  <p className="mt-1 text-sm leading-6 text-gray-600">
+                    Try again later with a verified PayPal account email, or
+                    contact us if PayPal says preapproved payment is unavailable.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </section>

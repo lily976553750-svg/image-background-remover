@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 
 interface PricingCheckoutButtonProps {
@@ -73,8 +73,25 @@ export default function PricingCheckoutButton({
         )}
       </button>
       {error ? (
-        <p className="mt-2 text-center text-xs leading-5 text-red-600">{error}</p>
+        <div className="mt-3 rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-xs leading-5 text-red-700">
+          <p className="font-semibold">{error}</p>
+          <p className="mt-1">
+            No charge was made. You can try again, keep using the free plan, or{" "}
+            <a
+              href="mailto:support@bg-remover.xyz?subject=PayPal%20checkout%20help"
+              className="font-semibold underline underline-offset-4"
+            >
+              contact support
+            </a>
+            .
+          </p>
+        </div>
       ) : null}
+      <p className="mt-2 flex items-start justify-center gap-1.5 text-center text-xs leading-5 text-gray-500">
+        <ShieldCheck className="mt-0.5 h-3.5 w-3.5 flex-none" />
+        Secure PayPal subscription. You are charged only after approving on
+        PayPal.
+      </p>
     </div>
   );
 }
