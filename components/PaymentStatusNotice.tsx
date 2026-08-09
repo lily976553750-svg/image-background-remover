@@ -40,8 +40,8 @@ export default function PaymentStatusNotice() {
             <p className="font-semibold">PayPal checkout was not completed.</p>
             <p className="mt-1">
               No charge was made. If PayPal showed a security check or could not
-              set up a preapproved payment, try again later, use a verified
-              PayPal account email, or contact us for help.
+              approve the checkout, try again later, use a verified PayPal
+              account email, or contact us for help.
             </p>
             <div className="mt-3 flex flex-wrap gap-3">
               <a

@@ -181,9 +181,9 @@ const faqs = [
       "PayPal may ask for a captcha, login verification, or account check based on its own risk system. BG Remover cannot control that PayPal screen, and no charge is made until you approve the subscription on PayPal.",
   },
   {
-    question: "What if PayPal cannot set up a preapproved payment?",
+    question: "What if PayPal cannot approve the subscription?",
     answer:
-      "That usually means PayPal could not approve the subscription flow for that account, browser, network, or region at that moment. You can try again later, use a verified PayPal account email, or contact support.",
+      "That usually means PayPal could not approve the checkout for that account, browser, network, or region at that moment. You can try again later, use a verified PayPal account email, or contact support.",
   },
 ];
 
@@ -341,8 +341,8 @@ export default function PricingPage() {
                 <div>
                   <h3 className="font-semibold text-gray-950">PayPal checkout</h3>
                   <p className="mt-1 text-sm leading-6 text-gray-600">
-                    Paid plans use PayPal subscriptions in USD. PayPal may ask
-                    you to sign in or complete a security check.
+                    Prices are listed in USD. PayPal securely handles checkout
+                    and may ask you to sign in or complete a security check.
                   </p>
                 </div>
               </div>
@@ -362,7 +362,7 @@ export default function PricingPage() {
                   <h3 className="font-semibold text-gray-950">Payment trouble?</h3>
                   <p className="mt-1 text-sm leading-6 text-gray-600">
                     Try again later with a verified PayPal account email, or
-                    contact us if PayPal says preapproved payment is unavailable.
+                    contact us if PayPal cannot approve the checkout.
                   </p>
                 </div>
               </div>

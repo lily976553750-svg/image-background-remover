@@ -89,8 +89,8 @@ export default function PricingCheckoutButton({
       ) : null}
       <p className="mt-2 flex items-start justify-center gap-1.5 text-center text-xs leading-5 text-gray-500">
         <ShieldCheck className="mt-0.5 h-3.5 w-3.5 flex-none" />
-        Secure PayPal subscription. You are charged only after approving on
-        PayPal.
+        Secure checkout by PayPal. You are charged only after approving the
+        plan on PayPal.
       </p>
     </div>
   );
